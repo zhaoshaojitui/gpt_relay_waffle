@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>My GPT Chat</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; background: #f8f9fa; }
+    #chat-box { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; background: white; }
+    #user-input { width: 80%; padding: 10px; }
+    #send-btn { padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2>My GPT Chat</h2>
+  <div id="chat-box"></div>
+  <br>
+  <input id="user-input" type="text" placeholder="输入你的问题..." />
+  <button id="send-btn">发送</button>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const input = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    function appendMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.innerHTML = `<b>${sender}:</b> ${text}`;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    sendBtn.onclick = async () => {
+      const message = input.value.trim();
+      if (!message) return;
+      appendMessage("你", message);
+      input.value = "";
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+      if (data.reply) appendMessage("GPT", data.reply);
+      else appendMessage("错误", data.error || "请求失败");
+    };
+  </script>
+</body>
+</html>
