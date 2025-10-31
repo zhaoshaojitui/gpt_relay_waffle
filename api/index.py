@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import openai
 import os
-from serverless_http import handle  # 新增导入
 
 app = Flask(__name__)
 
@@ -29,6 +28,5 @@ def ask():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# 这是 Vercel 运行时会寻找的入口点
-# 使用 serverless-http 创建一个符合 Vercel Python 运行时要求的处理程序
-handler = handle(app)  # 替换掉你原来的 handler 函数
+# 这是 Vercel 运行时会寻找的对象
+app=app
